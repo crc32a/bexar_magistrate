@@ -21,7 +21,7 @@ def load_json(pathIn):
     return json.loads(open(os.path.expanduser(pathIn),"r").read())
 
 def save_json(pathOut,obj):
-    open(os.path.expanduser(pathOut),"w").write(json.dumps(obj,indent=2))
+    open(os.path.expanduser(pathOut),"w").write(json.dumps(obj, indent=2))
 
 
 def get_inmates():
@@ -29,9 +29,9 @@ def get_inmates():
     lines = req.text.split("\n")
     inmates = []
     for line in lines:
-        (link, name) = find_link_and_name(line)
+        (link, name, intake_num) = find_link_and_name(line)
         if link and name:
-            inmates.append([link.strip(), name.strip()])
+            inmates.append([link.strip(), name.strip(),intake_num.strip()])
     return inmates
 
 
@@ -40,13 +40,17 @@ def find_link_and_name(line):
     search_len = len(search_str)
     n = line.find(search_str)
     if n < 0:
-        return (None, None)
+        return (None, None, None)
     link = [mag_url]
     link.append(search_str)
     i = n + search_len
+    digit_list = []
     while line[i].isdigit():
-        link.append(line[i])
+        digit = line[i]
+        link.append(digit)
+        digit_list.append(digit)
         i += 1
+    intake_num = "".join(digit_list)
     url = "".join(link)
     i += 2
     letters = []
@@ -54,7 +58,7 @@ def find_link_and_name(line):
         letters.append(line[i])
         i += 1
     name = "".join(letters)
-    return (url, name)
+    return (url, name, intake_num)
 
 def test_re(re_str,line):
     date_re = re.compile(re_str)
@@ -80,7 +84,7 @@ def get_all_inmate_data():
     n_inmates = len(inmate_headers)
     printf("%d inmates in magistrate\n", n_inmates)
     i = 0
-    for (url, name) in inmate_headers:
+    for (url, name, intake_num) in inmate_headers:
         if url is None or name is None:
             continue
         printf("Fetching inmate %s %d of %d\n", name, i, n_inmates)
@@ -88,11 +92,12 @@ def get_all_inmate_data():
         try:
             inmate_text = get_inmate(url)
             inmate = parse_inmate(inmate_text)
+            inmate['intake_num'] = intake_num
             inmates.append(inmate)
             time.sleep(1.0)
         except:
             printf("Failed to fetch data for %s %s\n", name, sys.exc_info())
-            failed.append([url,name])
+            failed.append([url,name, intake_num])
     return {"inmates": inmates,"failed_fetch": failed}
 
 def parse_inmate(inmate_text):
@@ -105,11 +110,18 @@ def parse_inmate(inmate_text):
 def retry_failed(inmates):
     failed_fetches = inmates['failed_fetch'][:]
     inmates['failed_fetch'] = []
-    for(url, name) in failed_fetches:
+    n_failures = len(failed_fetches)
+    printf("fetching %d inmates\n", n_failures)
+    i = 0
+    for(url, name, intake_num) in failed_fetches:
         try:
+            printf("Fetching inmate %s intake %s %d of %d\n", name,
+                   intake_num, i, n_failures)
+            i += 1
             inmate_text = get_inmate(url)
             inmate = parse_inmate(inmate_text)
-            time.sleep(1.0)
+            inmate['intake_num'] = intake_num
+            time.sleep(2.0)
             inmates['inmates'].append(inmate)
         except:
             printf("Failed to fetch data for %s %s\n", name, sys.exc_info())
