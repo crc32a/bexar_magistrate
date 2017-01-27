@@ -28,4 +28,4 @@ def main(*args):
     sm.save_json(collected_inmate_file, collected_inmates)
 
 if __name__ == "__main__":
-    main(*["","inmates.json","all.json"])
+    main(*sys.argv)

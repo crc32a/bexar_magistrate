@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import xml.etree.ElementTree as ET
+import datetime
 import traceback
 import requests
 import time
@@ -125,10 +126,15 @@ def retry_failed(inmates):
             inmates['inmates'].append(inmate)
         except:
             printf("Failed to fetch data for %s %s\n", name, sys.exc_info())
-            inmates['failed_fetch'].append([url,name])
+            inmates['failed_fetch'].append([url, name, intake_num])
     return inmates
 
-
+def inmate_age(inmate):
+    dob = inmate['Date of Birth']
+    dt = datetime.datetime.strptime(dob,"%B %d, %Y")
+    today = datetime.date.today()
+    age = today.year - dt.year - ((today.month, today.day) < (dt.month, dt.day))
+    return age
 
 def parse_inmate_data(inmate_table):
     inmate_data = {}
@@ -136,7 +142,7 @@ def parse_inmate_data(inmate_table):
     trs = table.findall(".//tr")
     for tr in trs:
         tds = tr.findall(".//td")
-        if len(tds) >=2:
+        if len(tds) >= 2:
             col = tds[0].text.strip().replace(":","")
             val = tds[1].getchildren()[0].text
             if val is not None:
