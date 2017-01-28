@@ -26,6 +26,7 @@ def main(*args):
         sex = inmate['Sex']
         race = inmate['Race']
         arrest = inmate['Arrest Date/Time']
+        sid = inmate['SID']
         release = inmate['CMAG Release Date/Time']
 
         hit = False
@@ -35,8 +36,8 @@ def main(*args):
                 hit = True
                 break
         if hit:
-            sm.printf("%s %s %s %s %s arrest=\"%s\" release=\"%s\"\n", 
-                      intake_num, name, age, race, sex, arrest, release)
+            sm.printf("%s %s %s %s %s %s arrest=\"%s\" release=\"%s\"\n", 
+                      intake_num, name, age, race, sex, sid, arrest, release)
             sm.printf("==================================\n")
             for charge in inmate['charges']:
                 sm.printf("%s %s %s\n", charge['offense'], charge['type'],
