@@ -20,8 +20,6 @@ def main(*args):
     curr_inmates = sm.load_json(inmate_file)['inmates']
     collected_ids = set(collected_inmates.keys())
     for inmate in curr_inmates:
-        if inmate['intake_num'] in collected_ids:
-            continue
         sm.printf("New inmate %s intake %s found\n", inmate['Name'],
                   inmate['intake_num'])
         collected_inmates[inmate['intake_num']] = inmate
