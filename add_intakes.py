@@ -21,10 +21,10 @@ def main(*args):
     collected_ids = set(collected_inmates.keys())
     for inmate in curr_inmates:
         if inmate['intake_num'] in collected_ids:
-            sm.printf("NEW inmate %s intake %s found\n", inmate['Name'],
+            sm.printf("UPDATE inmate %s intake %s found\n", inmate['Name'],
                       inmate['intake_num'])
         else:
-            sm.printf("UPDATE inmate %s intake %s found\n", inmate['Name'],
+            sm.printf("NEW inmate %s intake %s found\n", inmate['Name'],
                       inmate['intake_num'])
         collected_inmates[inmate['intake_num']] = inmate
     sm.save_json(collected_inmate_file, collected_inmates)
