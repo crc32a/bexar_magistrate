@@ -8,7 +8,7 @@ import re
 
 def main(*args):
     if len(args)<3:
-        sm.printf("usage is %s collection_jsonfile charge\n",args[0])
+        sm.printf("usage is %s <collection_jsonfile> <charge>\n",args[0])
         sm.printf("\n")
         sm.printf("search the inmates for the given charge\n")
         sm.printf("\n")
