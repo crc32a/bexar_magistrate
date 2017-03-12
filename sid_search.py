@@ -8,8 +8,8 @@ import re
 
 
 def main(*args):
-    if len(args)<2:
-        sm.printf("usage is %s <collection_jsonfile>\n",args[0])
+    if len(args)<3:
+        sm.printf("usage is %s <collection_jsonfile> <sid>\n",args[0])
         sm.printf("\n")
         sm.printf("count inmate charges and list rankings\n")
         sm.printf("\n")
