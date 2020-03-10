@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import xml.etree.ElementTree as ET
 import datetime
@@ -88,11 +88,14 @@ def get_all_inmate_data():
     for (url, name, intake_num) in inmate_headers:
         if url is None or name is None:
             continue
-        printf("Fetching inmate %s %d of %d\n", name, i, n_inmates)
+        printf("%s %d of %d\n", name, i, n_inmates)
         i += 1
         try:
             inmate_text = get_inmate(url)
             inmate = parse_inmate(inmate_text)
+            for charge in inmate["charges"]:
+                printf("    %s\n", charge["offense"])
+            printf("\n")
             inmate['intake_num'] = intake_num
             inmates.append(inmate)
             time.sleep(1.0)
