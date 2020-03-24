@@ -6,6 +6,7 @@ import requests
 import json
 import time
 import sys
+import os
 
 def printf(format,*args): sys.stdout.write(format%args)
 
@@ -18,8 +19,31 @@ charge_cols = [ "mag_num", "offense_desc", "offense_type", "boond_amount" ]
 recoveryParser = etree.XMLParser(recover=True)
 
 
+def usage(prog):
+    printf("usage is %s <arrests_file.json>\n", prog)
+    printf("\n")
+    printf("Fetch all recent arrests\n")
+
+def load_json(file_name):
+    fp = open(os.path.expanduser(file_name),"r")
+    data = fp.read()
+    fp.close()
+    return json.loads(data)
+
+
+def save_json(file_name, obj):
+    fp = open(os.path.expanduser(file_name), "w")
+    fp.write(json.dumps(obj, indent=4))
+    fp.close()
+    
+
 def main(args):
+    if len(args)<2:
+        usage(args[0])
+        sys.exit()
     json_file = args[1]
+    arrests = get_arrests_main()
+    save_json(json_file, arrests)
 
 def get_arrests_main():
     obj = {"arrests":[],"failed":[]}
