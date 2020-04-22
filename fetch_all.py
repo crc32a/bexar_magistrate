@@ -50,16 +50,24 @@ def get_arrests_main():
     arrests = get_recent_arrests()
     n = len(arrests)
     for(i,  arrest) in enumerate(arrests):
-        name = arrest['name']
-        printf("loading %i of %i name=%s\n", i, n, name)
+        name = arrest["name"]
+        dob = arrest["dob"]
+        sid = arrest["sid"]
+        printf("loading %i of %i name=%s", i, n, name)
+        printf(" dob=%s sid=%s\n", dob, sid)
         intake_num = arrest["intakeNum"]
         try:
             html = get_intake_html(intake_num)
             root = parse_html(html)
             intake = parse_intake(root)
             charges = parse_charges(root)
-            intake['intake_num'] = intake_num
+            intake["intake_num"] = intake_num
             intake["charges"] = charges
+            for charge in intake["charges"]:
+                printf("  %s:", charge["offense_desc"])
+                printf("%s\n", charge["offense_type"])
+            printf("\n")
+            sys.stdout.flush()
             obj["arrests"].append(intake)
         except:
             traceback.print_exc()
